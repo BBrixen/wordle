@@ -1,11 +1,11 @@
-### TODO: 
- - remove GraphicsDisplay (make it all 1 class)
+### TODO:
  - Refactor model/controller
  - update text view with new refactor
  - make model an observable and subscribe the views to it
- - upon resubscribe, just redraw everything. (explain how this is slightly inefficient due to having to redraw, but since the drawing is not that hard its overall fine for performance)
+ - upon update, just redraw everything. (explain how this is slightly inefficient due to having to redraw, but since the drawing is not that hard its overall fine for performance)
  - make the labels for the letters prettier
  - turn everything into constants
+ - add animation
 
 # Wordle GUI
 

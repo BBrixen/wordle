@@ -3,6 +3,7 @@ package model;
 import utilities.Guess;
 import utilities.INDEX_RESULT;
 import java.util.Arrays;
+import java.util.Observable;
 
 /**
  * This clas represents the wordle word. It stores the correct answer and the characters that have been guessed.
@@ -11,7 +12,7 @@ import java.util.Arrays;
  * analyze the word character by character returning INDEX_RESULT's for each character in
  * a guess or the guessed characters
  */
-public class WordleModel {
+public class WordleModel extends Observable {
 
 	private final String answer;
 	private final INDEX_RESULT[] guessedCharacters;

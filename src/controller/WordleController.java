@@ -16,7 +16,7 @@ import java.util.*;
  * This can handle a guess by validating it and then calling the model. It then takes the guess information
  * from the model and stores it as well as determining if the game has concluded.
  */
-public class WordleController {
+public class WordleController extends Observable implements Observer {
 
 	private final WordleModel model;
 	private final int letters;
@@ -37,6 +37,7 @@ public class WordleController {
 	public WordleController (int letters, int maxRows, String filename) {
 		// maxRows and letters is for the number of guesses and the letters in each guess
 		this.model = new WordleModel(Objects.requireNonNull(selectWord(filename)));
+		this.model.addObserver(this);
 		this.row = 0;
 		this.letters = letters;
 		this.gameOver = false;
@@ -166,5 +167,11 @@ public class WordleController {
 			throw new IncorrectGuessException("Guesses must only contain letters\n");
 		if (!allwords.contains(guess))
 			throw new IncorrectGuessException("Guess must be a valid word in dictionary\n");
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// this just passes the update to the view
+
 	}
 }

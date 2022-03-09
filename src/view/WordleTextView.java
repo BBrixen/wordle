@@ -4,6 +4,9 @@ import controller.WordleController;
 import utilities.Guess;
 import utilities.INDEX_RESULT;
 import utilities.IncorrectGuessException;
+
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Scanner;
 
 /**
@@ -18,7 +21,7 @@ import java.util.Scanner;
  * current state is also printed for the user
  */
 
-public class WordleTextView {
+public class WordleTextView implements Observer {
 
     private static final String ANSI_RESET = "\u001B[0m";
     private static final int wordleLength = 5, maxGuesses = 6; // typical wordle
@@ -120,4 +123,8 @@ public class WordleTextView {
         }
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+
+    }
 }
