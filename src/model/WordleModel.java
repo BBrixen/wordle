@@ -17,6 +17,8 @@ public class WordleModel extends Observable {
 	private final String answer;
 	private final INDEX_RESULT[] guessedCharacters;
 	private final Guess[] progress;
+	private int row;
+	private boolean gameOver;
 
 	/**
 	 * This creates a wordle model which represents the correct wordle word
@@ -26,11 +28,13 @@ public class WordleModel extends Observable {
 	 * @param answer the correct wordle word
 	 */
 	public WordleModel(String answer, int maxRows) {
+		this.row = 0;
+		this.gameOver = false;
 		this.answer = answer.toUpperCase();
+
 		guessedCharacters = new INDEX_RESULT[26];
 		Arrays.fill(guessedCharacters, INDEX_RESULT.UNGUESSED);
 		this.progress = new Guess[maxRows];
-
 		this.fillProgress();
 	}
 
@@ -148,6 +152,10 @@ public class WordleModel extends Observable {
 		return this.progress;
 	}
 
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
 	/**
 	 * This handles a guess against the model.
 	 *
@@ -156,9 +164,8 @@ public class WordleModel extends Observable {
 	 * which holds the needed information about the guess.
 	 *
 	 * @param guess the word being guessed
-	 * @return a guess object which holds the parsed information about the guess
 	 */
-	public Guess handleGuess(String guess, int row) {
+	public void handleGuess(String guess) {
 		// starting off, every letter is incorrect
 		INDEX_RESULT[] combination = new INDEX_RESULT[guess.length()];
 		Arrays.fill(combination, INDEX_RESULT.INCORRECT);
@@ -172,9 +179,16 @@ public class WordleModel extends Observable {
 		// so we pass it into update guessed characters so they have accurate information
 		updateGuessedCharacters(guess, combination);
 
-		Guess currentGuess = new Guess(guess, combination, guess.equalsIgnoreCase(this.answer));
-		this.progress[row] = currentGuess;
-		return currentGuess;
+		// creating guess, storing it and updating needed values
+		Guess guessResult = new Guess(guess, combination, guess.equalsIgnoreCase(this.answer));
+		this.progress[row] = guessResult;
+		row ++;
+		// check if the words are the same or if they have used all their guesses
+		if (guessResult.getIsCorrect() || row == this.getProgress().length) gameOver = true;
+
+		// notifying observers
+		setChanged();
+		notifyObservers(this);
 	}
 
 }

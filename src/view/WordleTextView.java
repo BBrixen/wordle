@@ -23,29 +23,29 @@ import java.util.Scanner;
 
 public class WordleTextView implements Observer {
 
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final int wordleLength = 5, maxGuesses = 6; // typical wordle
+    private final String ANSI_RESET = "\u001B[0m";
+    private final int wordleLength = 5, maxGuesses = 6; // typical wordle
 
     /**
      * This is the main wordle game. Run this to play!
      * This allows you to play multiple games by asking again after a game has finished.
-     *
-     * @param args (unused)
      */
-    public static void main(String[] args) {
+    public WordleTextView() {
         System.out.println("RED = INCORRECT");
         System.out.println("GREEN = CORRECT");
         System.out.println("BLUE = CORRECT BUT IN A DIFFERENT PLACE");
         // these values here are for starting the main game loop
         boolean playing = true;
         while (playing) {
+            System.out.print("\nEnter a guess: ");
 
             WordleController controller = new WordleController(wordleLength, maxGuesses, "Dictionary.txt");
+            controller.addObserver(this);
             Scanner scanner = new Scanner(System.in);
 
             playGame(controller, scanner);
 
-            System.out.println("Good game! The word was " + controller.getAnswer() + ".");
+            System.out.println("\n\nGood game! The word was " + controller.getAnswer() + ".");
             System.out.println("Would you like to play again? yes/no");
             String answer = scanner.nextLine();
             if (!answer.equalsIgnoreCase("yes") && !answer.equalsIgnoreCase("y"))
@@ -59,7 +59,7 @@ public class WordleTextView implements Observer {
      *
      * @param controller the wordle game controller
      */
-    public static void displayProgress(WordleController controller) {
+    public void displayProgress(WordleController controller) {
         Guess[] prog = controller.getProgress();
         String[] guessedCharacters = parseGuessedCharacters(controller.getGuessedCharacters());
 
@@ -81,11 +81,11 @@ public class WordleTextView implements Observer {
             System.out.print(character + " " + ANSI_RESET);
         }
 
-        // formatting
-        System.out.println('\n');
+        if (!controller.isGameOver())
+            System.out.print("\nEnter a guess: ");
     }
 
-    public static String[] parseGuessedCharacters(INDEX_RESULT[] guessedCharacters) {
+    public String[] parseGuessedCharacters(INDEX_RESULT[] guessedCharacters) {
         String[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
         // adds color code to each letter
         for (int i = 0; i < guessedCharacters.length; i++) {
@@ -102,14 +102,13 @@ public class WordleTextView implements Observer {
      * @param controller the controller for the current game
      * @param scanner the scanner for user input
      */
-    public static void playGame(WordleController controller, Scanner scanner) {
+    public void playGame(WordleController controller, Scanner scanner) {
         while (!controller.isGameOver()) {
             String guess;
 
             while (true) {
                 try {
 
-                    System.out.print("Enter a guess: ");
                     guess = scanner.nextLine();
                     controller.makeGuess(guess);
                     break; // we can successfully break now because valid guess
@@ -118,13 +117,11 @@ public class WordleTextView implements Observer {
                     System.out.println(e.getMessage());
                 }
             }
-
-            displayProgress(controller);
         }
     }
 
     @Override
     public void update(Observable o, Object arg) {
-
+        displayProgress((WordleController) arg);
     }
 }

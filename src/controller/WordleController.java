@@ -21,8 +21,6 @@ public class WordleController extends Observable implements Observer {
 	private final WordleModel model;
 	private final int letters;
 	private ArraySet<String> allwords;
-	private int row;
-	private boolean gameOver;
 
 	/**
 	 * This creates a controller for a game of wordle
@@ -37,9 +35,7 @@ public class WordleController extends Observable implements Observer {
 		// maxRows and letters is for the number of guesses and the letters in each guess
 		this.model = new WordleModel(Objects.requireNonNull(selectWord(filename)), maxRows);
 		this.model.addObserver(this);
-		this.row = 0;
 		this.letters = letters;
-		this.gameOver = false;
 	}
 
 	/**
@@ -50,7 +46,7 @@ public class WordleController extends Observable implements Observer {
 	 * @return true if game is over, false otherwise
 	 */
 	public boolean isGameOver() {
-		return this.gameOver;
+		return model.isGameOver();
 	}
 
 	/**
@@ -67,11 +63,7 @@ public class WordleController extends Observable implements Observer {
 
 		// validating and handling
 		validGuess(guess);
-		Guess guessResult = model.handleGuess(guess, row);
-
-		row ++;
-		// check if the words are the same or if they have used all their guesses
-		if (guessResult.getIsCorrect() || row == model.getProgress().length) gameOver = true;
+		model.handleGuess(guess);
 	}
 
 	/**
@@ -151,6 +143,7 @@ public class WordleController extends Observable implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		// this just passes the update to the view
-
+		setChanged();
+		notifyObservers(this);
 	}
 }

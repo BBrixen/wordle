@@ -1,5 +1,4 @@
 ### TODO:
- - Refactor model/controller
  - update text view with new refactor
  - make model an observable and subscribe the views to it
  - upon update, just redraw everything. (explain how this is slightly inefficient due to having to redraw, but since the drawing is not that hard its overall fine for performance)
