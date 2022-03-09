@@ -16,6 +16,7 @@ public class WordleModel extends Observable {
 
 	private final String answer;
 	private final INDEX_RESULT[] guessedCharacters;
+	private final Guess[] progress;
 
 	/**
 	 * This creates a wordle model which represents the correct wordle word
@@ -24,12 +25,30 @@ public class WordleModel extends Observable {
 	 *
 	 * @param answer the correct wordle word
 	 */
-	public WordleModel(String answer) {
+	public WordleModel(String answer, int maxRows) {
 		this.answer = answer.toUpperCase();
 		guessedCharacters = new INDEX_RESULT[26];
 		Arrays.fill(guessedCharacters, INDEX_RESULT.UNGUESSED);
+		this.progress = new Guess[maxRows];
+
+		this.fillProgress();
 	}
 
+	/**
+	 * This fills the progress array with empty guesses
+	 */
+	private void fillProgress() {
+		StringBuilder emptyGuess = new StringBuilder();
+		INDEX_RESULT[] unguessed = new INDEX_RESULT[progress.length - 1];
+
+		for (int i = 0; i < answer.length(); i++) {
+			emptyGuess.append("-");
+			unguessed[i] = INDEX_RESULT.UNGUESSED;
+		}
+		Guess defaultGuess = new Guess(emptyGuess.toString(), unguessed, false);
+
+		Arrays.fill(progress, defaultGuess);
+	}
 
 	/**
 	 * This returns a list of INDEX_RESULTS for all the semi-correct positions
@@ -121,6 +140,15 @@ public class WordleModel extends Observable {
 	}
 
 	/**
+	 * Gets the progress of the game so far. This is used to display
+	 *
+	 * @return a list of guesses which represents the progress
+	 */
+	public Guess[] getProgress() {
+		return this.progress;
+	}
+
+	/**
 	 * This handles a guess against the model.
 	 *
 	 * It analyzes the word to determine the validity of each letter. It uses this to update the
@@ -130,7 +158,7 @@ public class WordleModel extends Observable {
 	 * @param guess the word being guessed
 	 * @return a guess object which holds the parsed information about the guess
 	 */
-	public Guess handleGuess(String guess) {
+	public Guess handleGuess(String guess, int row) {
 		// starting off, every letter is incorrect
 		INDEX_RESULT[] combination = new INDEX_RESULT[guess.length()];
 		Arrays.fill(combination, INDEX_RESULT.INCORRECT);
@@ -144,7 +172,9 @@ public class WordleModel extends Observable {
 		// so we pass it into update guessed characters so they have accurate information
 		updateGuessedCharacters(guess, combination);
 
-		return new Guess(guess, combination, guess.equalsIgnoreCase(this.answer));
+		Guess currentGuess = new Guess(guess, combination, guess.equalsIgnoreCase(this.answer));
+		this.progress[row] = currentGuess;
+		return currentGuess;
 	}
 
 }

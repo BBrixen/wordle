@@ -21,7 +21,6 @@ public class WordleController extends Observable implements Observer {
 	private final WordleModel model;
 	private final int letters;
 	private ArraySet<String> allwords;
-	private final Guess[] progress;
 	private int row;
 	private boolean gameOver;
 
@@ -36,30 +35,11 @@ public class WordleController extends Observable implements Observer {
 	 */
 	public WordleController (int letters, int maxRows, String filename) {
 		// maxRows and letters is for the number of guesses and the letters in each guess
-		this.model = new WordleModel(Objects.requireNonNull(selectWord(filename)));
+		this.model = new WordleModel(Objects.requireNonNull(selectWord(filename)), maxRows);
 		this.model.addObserver(this);
 		this.row = 0;
 		this.letters = letters;
 		this.gameOver = false;
-		this.progress = new Guess[maxRows];
-
-		this.fillProgress();
-	}
-
-	/**
-	 * This fills the progress array with empty guesses
-	 */
-	private void fillProgress() {
-		StringBuilder emptyGuess = new StringBuilder();
-		INDEX_RESULT[] unguessed = new INDEX_RESULT[progress.length - 1];
-
-		for (int i = 0; i < letters; i++) {
-			emptyGuess.append("-");
-			unguessed[i] = INDEX_RESULT.UNGUESSED;
-		}
-		Guess defaultGuess = new Guess(emptyGuess.toString(), unguessed, false);
-
-		Arrays.fill(progress, defaultGuess);
 	}
 
 	/**
@@ -87,12 +67,11 @@ public class WordleController extends Observable implements Observer {
 
 		// validating and handling
 		validGuess(guess);
-		Guess guessResult = model.handleGuess(guess);
+		Guess guessResult = model.handleGuess(guess, row);
 
-		progress[row] = guessResult;
 		row ++;
 		// check if the words are the same or if they have used all their guesses
-		if (guessResult.getIsCorrect() || row == progress.length) gameOver = true;
+		if (guessResult.getIsCorrect() || row == model.getProgress().length) gameOver = true;
 	}
 
 	/**
@@ -110,7 +89,7 @@ public class WordleController extends Observable implements Observer {
 	 * @return a list of guesses which represents the progress
 	 */
 	public Guess[] getProgress() {
-		return progress;
+		return model.getProgress();
 	}
 
 	/**
