@@ -1,8 +1,4 @@
 ### TODO:
- - make wordlegui an object
- - store progress in grid of labels and store guessed characters in a list of labels
- - upon update, update the new characters in the most recent guess (might want to pass guess as data for the update)
- - make the labels for the letters prettier
  - turn everything into constants
  - add animation
 

@@ -342,6 +342,5 @@ public class WordleGUIView extends Application implements Observer {
 		}
 
 		curRow ++;
-		curCol = 0;
 	}
 }
