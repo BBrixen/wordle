@@ -1,6 +1,8 @@
 package view;
 
 public class Wordle {
+
+    public static final int wordleLength = 5, maxGuesses = 6; // typical wordle
 	
     public static void main(String[] args) {
         if (args.length > 0) {
