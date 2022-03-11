@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Observable;
 
 /**
- * This clas represents the wordle word. It stores the correct answer and the characters that have been guessed.
+ * This class represents the wordle word. It stores the correct answer and the characters that have been guessed.
  * It uses INDEX_RESULT to distinguish between correct/incorrect/unguessed/correct but wrong place.
  * It contains multiple functions like correctLettersCorrectPlaces and correctLettersWrongPlaces which
  * analyze the word character by character returning INDEX_RESULT's for each character in

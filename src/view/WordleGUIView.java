@@ -25,13 +25,13 @@ import java.util.Observer;
  */
 public class WordleGUIView extends Application implements Observer {
 
-	public final int wordleLength = 5, maxGuesses = 6; // typical wordle
+	public static final int wordleLength = 5, maxGuesses = 6; // typical wordle
 	public String currentWord; // this holds the current word being typed in
 	private Stage stage;
 
 	// public because they are used in GraphicsDisplay
-	public final Font mainFont = new Font("Arial", 48);
-	private final int LETTER_SPACING = 80;
+	public static final Font mainFont = new Font("Arial", 48);
+	private static final int LETTER_SPACING = 80;
 
 	@Override
 	public void start(Stage stage) {
