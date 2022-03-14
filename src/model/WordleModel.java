@@ -43,8 +43,7 @@ public class WordleModel extends Observable {
 	 */
 	private void fillProgress() {
 		StringBuilder emptyGuess = new StringBuilder();
-		INDEX_RESULT[] unguessed = new INDEX_RESULT[progress.length - 1];
-
+		INDEX_RESULT[] unguessed = new INDEX_RESULT[answer.length()];
 		for (int i = 0; i < answer.length(); i++) {
 			emptyGuess.append("-");
 			unguessed[i] = INDEX_RESULT.UNGUESSED;

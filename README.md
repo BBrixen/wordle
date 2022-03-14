@@ -1,7 +1,11 @@
 ### Bennett's Notes:
  - The default gui size is 1100x900, however if this is too large for your screen you should be able to modity it and it will look fine. 
  - no promises for all sizes, but i tested 800x800 and 600x400 and they work
- - 
+
+
+ - this works for n number of letters and m number of guesses! you just need a file named Dictionary[n].txt, where n is the number of letters of words in the file. 
+ - i have provided a file for 5, 6, and 7 letter words. 
+ - 6 and 7 may have some untested bugs, i spend most of my time making sure that 5 letters worked, and have not been able to test 6 and 7 as thoroughly
 
 ### TODO:
  - add animation

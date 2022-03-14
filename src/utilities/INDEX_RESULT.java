@@ -18,7 +18,7 @@ import javafx.scene.paint.Color;
  */
 public enum INDEX_RESULT {
 
-	INCORRECT("Incorrect!", "\u001B[31m", Color.rgb(40,40,40)),
+	INCORRECT("Incorrect!", "\u001B[31m", Color.rgb(50,50,50)),
 	CORRECT("Correct!", "\u001B[32m", Color.GREEN),
 	CORRECT_WRONG_INDEX("Correct but wrong location", "\u001B[34m", Color.YELLOW),
 	UNGUESSED("???", "\u001B[0m", Color.WHITE); // added this for storing unguessed characters in the list of all characters

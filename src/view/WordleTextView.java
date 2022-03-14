@@ -8,8 +8,8 @@ import utilities.IncorrectGuessException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
-import static view.Wordle.maxGuesses;
-import static view.Wordle.wordleLength;
+
+import static view.Wordle.*;
 
 /**
  * This is an implementation of Wordl (a word game). You must guess a 5 letter word in 6 guesses. Each guess gives you
@@ -40,7 +40,7 @@ public class WordleTextView implements Observer {
         while (playing) {
             System.out.print("\nEnter a guess: ");
 
-            WordleController controller = new WordleController(wordleLength, maxGuesses, "Dictionary.txt");
+            WordleController controller = new WordleController(wordleLength, maxGuesses, filename);
             controller.addObserver(this);
             Scanner scanner = new Scanner(System.in);
 

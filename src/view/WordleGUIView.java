@@ -19,8 +19,8 @@ import utilities.INDEX_RESULT;
 import utilities.IncorrectGuessException;
 import java.util.Observable;
 import java.util.Observer;
-import static view.Wordle.maxGuesses; // wordle game variables
-import static view.Wordle.wordleLength;
+
+import static view.Wordle.*;
 
 /**
  *
@@ -297,7 +297,7 @@ public class WordleGUIView extends Application implements Observer {
 		curRow = 0;
 		curCol = 0;
 
-		WordleController controller = new WordleController(wordleLength, maxGuesses, "Dictionary.txt");
+		WordleController controller = new WordleController(wordleLength, maxGuesses, filename);
 		controller.addObserver(this);
 		currentWord = "";
 
