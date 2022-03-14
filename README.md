@@ -5,6 +5,7 @@
 
 ### TODO:
  - add animation
+ - add javadoc
 
 # Wordle GUI
 

@@ -1,5 +1,7 @@
 package view;
 
+import javafx.application.Application;
+
 public class Wordle {
 
     public static final int wordleLength = 5, maxGuesses = 6; // typical wordle
@@ -8,9 +10,9 @@ public class Wordle {
         if (args.length > 0) {
             String cmd = args[0];
             if (cmd.equals("-text")) new WordleTextView();
-            else if (cmd.equals("-gui")) WordleGUIView.main(args);
+            else if (cmd.equals("-gui")) Application.launch(WordleGUIView.class, args);
         }
-        else WordleGUIView.main(args);
+        else Application.launch(WordleGUIView.class, args);
     }
     
 }

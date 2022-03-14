@@ -41,7 +41,7 @@ public class WordleGUIView extends Application implements Observer {
 	private static final int MINI_SCENE_WIDTH = MAIN_SCENE_WIDTH/2;
 	private static final int MINI_SCENE_HEIGHT = MAIN_SCENE_HEIGHT/2;
 	private static final int LETTER_SPACING = Math.min(MAIN_SCENE_WIDTH/13, MAIN_SCENE_HEIGHT/13);
-	private static final Font MAIN_FONT = new Font("Arial", (int) LETTER_SPACING/2);
+	private static final Font MAIN_FONT = new Font("Arial", LETTER_SPACING/1.6);
 	private static final Insets LABEL_SPACING = new Insets(10);
 
 	@Override
