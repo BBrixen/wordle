@@ -28,20 +28,25 @@ import static view.Wordle.wordleLength;
 public class WordleGUIView extends Application implements Observer {
 
 	// object variables which will update throughout gameplay
-	private String currentWord; // this holds the current word being typed in
-	private Stage stage;
-	private Group progressGroup, guessedCharactersGroup;
-	private Label[] guessedCharactersList;
-	private Label[][] progressLabelGrid;
-	private int curRow, curCol;
+	private static String currentWord; // this holds the current word being typed in
+	private static Stage stage;
+	private static Group progressGroup, guessedCharactersGroup;
+	private static Label[] guessedCharactersList;
+	private static Label[][] progressLabelGrid;
+	private static int curRow, curCol;
 
-	// public because they are used in GraphicsDisplay
-	public static final Font mainFont = new Font("Arial", 48);
-	private static final int LETTER_SPACING = 80;
+	// variables for gui display (mostly dependent on size of screen)
+	private static final int MAIN_SCENE_WIDTH = 1100;
+	private static final int MAIN_SCENE_HEIGHT = 900;
+	private static final int MINI_SCENE_WIDTH = MAIN_SCENE_WIDTH/2;
+	private static final int MINI_SCENE_HEIGHT = MAIN_SCENE_HEIGHT/2;
+	private static final int LETTER_SPACING = Math.min(MAIN_SCENE_WIDTH/13, MAIN_SCENE_HEIGHT/13);
+	private static final Font MAIN_FONT = new Font("Arial", (int) LETTER_SPACING/2);
+	private static final Insets LABEL_SPACING = new Insets(10);
 
 	@Override
 	public void start(Stage stage) {
-		this.stage = stage;
+		WordleGUIView.stage = stage;
 		
 		// setting up wordle things for the first game
 		startGame();
@@ -50,9 +55,9 @@ public class WordleGUIView extends Application implements Observer {
 	public void createDisplay(WordleController controller) {
 		// top label
 		Label topLabel = new Label("Welcome to Bennett's Wordle");
-		topLabel.setFont(mainFont);
+		topLabel.setFont(MAIN_FONT);
 		topLabel.setTextFill(Color.WHITE);
-		topLabel.setPadding(new Insets(10)); // adding some offset from the top
+		topLabel.setPadding(LABEL_SPACING); // adding some offset from the top
 
 		// adding things to borderpane
 		// creating basic display
@@ -67,23 +72,28 @@ public class WordleGUIView extends Application implements Observer {
 		// offloading the bulk of displaying to another class for simplicity
 		displayProgress(currentWord, controller, progressGroup, guessedCharactersGroup);
 
-		// showing the scene
-		Scene scene = new Scene(pane, 1100, 900);
+		// adding keyboard inputs to the scene
+		Scene scene = new Scene(pane, MAIN_SCENE_WIDTH, MAIN_SCENE_HEIGHT);
 		scene.setOnKeyPressed((event) -> { // setting up keyboard input
 			String code = event.getCode().toString();
+
 			if (code.equals("ENTER")) {
 				this.enterGuess(controller);
+
 			} else if (code.equals("BACK_SPACE")) {
-				int len = this.currentWord.length();
+				int len = currentWord.length();
 				if (len <= 0) return;
-				this.currentWord = this.currentWord.substring(0, len - 1);
+				currentWord = currentWord.substring(0, len - 1);
 				this.update(null, controller);
-			} else if (code.matches("[a-zA-Z]")){
-				if (this.currentWord.length() >= wordleLength) return;
-				this.currentWord += code;
+
+			} else if (code.matches("[a-zA-Z]")) {
+				if (currentWord.length() >= wordleLength) return;
+				currentWord += code;
 				this.update(null, controller);
 			}
 		});
+
+		// showing the scene
 		stage.setScene(scene);
 		stage.setTitle("Wordle");
 		stage.show();
@@ -93,32 +103,32 @@ public class WordleGUIView extends Application implements Observer {
 		Guess[] allGuesses = controller.getProgress();
 		INDEX_RESULT[] guessedCharacters = controller.getGuessedCharacters();
 
-		int y = 1;
 		boolean foundEnd = false;
-		for (Guess guess : allGuesses) {
-
+		for (int i = 0; i < allGuesses.length; i++) {
+			Guess guess = allGuesses[i];
+			// adding the currently typed word to the display
 			if (guess.getGuess().startsWith("-") && !foundEnd) {
 				guess = generateCurrent(currentWord);
 				foundEnd = true;
 			}
 
-			displayGuess(guess, y * LETTER_SPACING, progressGroup);
-			y ++;
+			displayGuess(guess, (i+1) * LETTER_SPACING, progressGroup);
 		}
 
+		// adding the currently guesses/remaining characters
 		Label remainingCharacters = new Label("Character Status:");
-		remainingCharacters.setFont(mainFont);
+		remainingCharacters.setFont(MAIN_FONT);
 		remainingCharacters.setTextFill(Color.WHITE);
 		remainingCharacters.setTranslateX(0);
 		remainingCharacters.setTranslateY(0);
-		remainingCharacters.setPadding(new Insets(10)); // adding some offset from the top
+		remainingCharacters.setPadding(LABEL_SPACING); // adding some offset from the top
 		guessedCharactersGroup.getChildren().add(remainingCharacters);
 
 		displayGuessedCharacters(guessedCharacters, guessedCharactersGroup, controller);
 	}
 
 	private Guess generateCurrent(String currentWord) {
-		String filledWord = currentWord;
+		String filledWord = currentWord; // needs to be wordleLength long, with - filling any missing characters
 		INDEX_RESULT[] allUnguessed = new INDEX_RESULT[wordleLength];
 		for(int i = 0; i < wordleLength; i++) {
 			if (i >= currentWord.length()) filledWord += "-";
@@ -146,7 +156,7 @@ public class WordleGUIView extends Application implements Observer {
 		if (letter == '<') labelString = "Del";
 		Label label = new Label(labelString);
 		label.setPrefSize(LETTER_SPACING*2, LETTER_SPACING); // styling the label
-		label.setFont(mainFont);
+		label.setFont(MAIN_FONT);
 		label.setTextFill(value.getColor());
 		label.setTranslateX(x);
 		label.setTranslateY(y);
@@ -171,45 +181,45 @@ public class WordleGUIView extends Application implements Observer {
 		// 1st row
 		double x = 1.5;
 		int y = 1;
-		displayLetterConverter('Q', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('W', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('E', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('R', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('T', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('Y', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('U', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('I', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('O', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('P', guessedCharacters, x, y++, guessedCharactersGroup);
+		displayLetterConverter('Q', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('W', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('E', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('R', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('T', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('Y', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('U', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('I', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('O', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('P', guessedCharacters, x, y++, guessedCharactersGroup, controller);
 
 		// 2nd row
 		x = 2;
-		displayLetterConverter('A', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('S', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('D', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('F', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('G', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('H', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('J', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('K', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('L', guessedCharacters, x, y++, guessedCharactersGroup);
+		displayLetterConverter('A', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('S', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('D', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('F', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('G', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('H', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('J', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('K', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('L', guessedCharacters, x, y++, guessedCharactersGroup, controller);
 
 		// 3rd row
 		x = 1;
 		displayLetter('<', INDEX_RESULT.UNGUESSED, LETTER_SPACING*(x++), LETTER_SPACING*y, (event) -> {
-			int len = this.currentWord.length();
+			int len = currentWord.length();
 			if (len <= 0) return;
-			this.currentWord = this.currentWord.substring(0, len - 1);
+			currentWord = currentWord.substring(0, len - 1);
 		}, guessedCharactersGroup); // delete key removes last letter
 		x++;
 
-		displayLetterConverter('Z', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('X', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('C', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('V', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('B', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('N', guessedCharacters, x++, y, guessedCharactersGroup);
-		displayLetterConverter('M', guessedCharacters, x++, y, guessedCharactersGroup);
+		displayLetterConverter('Z', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('X', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('C', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('V', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('B', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('N', guessedCharacters, x++, y, guessedCharactersGroup, controller);
+		displayLetterConverter('M', guessedCharacters, x++, y, guessedCharactersGroup, controller);
 
 		x++;
 		displayLetter('>', INDEX_RESULT.UNGUESSED, LETTER_SPACING*x, LETTER_SPACING*y,
@@ -217,11 +227,12 @@ public class WordleGUIView extends Application implements Observer {
 	}
 
 	private void displayLetterConverter(char letter, INDEX_RESULT[] guessedCharacters,
-											   double x, int y, Group guessedCharactersGroup) {
+											   double x, int y, Group guessedCharactersGroup, WordleController controller) {
 		displayLetter(letter, guessedCharacters[letter - 'A'], LETTER_SPACING*x, LETTER_SPACING*y,
 				(event) -> {
-					if (this.currentWord.length() >= wordleLength) return;
-					this.currentWord += "" + letter;
+					if (currentWord.length() >= wordleLength) return;
+					currentWord += "" + letter;
+					this.update(null, controller);
 				}, guessedCharactersGroup);
 	}
 
@@ -247,14 +258,14 @@ public class WordleGUIView extends Application implements Observer {
 		pane.setStyle("-fx-background-color: black");
 
 		Label label = new Label("The word was " + controller.getAnswer() +
-				".\n\nWould you like to\nplay again?\n");
+				".\n\nWould you like to play again?\n");
 		label.setWrapText(true);
-		label.setFont(mainFont);
+		label.setFont(MAIN_FONT);
 		label.setTextFill(Color.WHITE);
 		pane.setTop(label);
 
 		Label yesButton = new Label("Yes");
-		yesButton.setFont(mainFont);
+		yesButton.setFont(MAIN_FONT);
 		yesButton.setTextFill(Color.WHITE);
 		pane.setCenter(yesButton);
 		yesButton.setOnMouseClicked((event) -> {
@@ -263,7 +274,7 @@ public class WordleGUIView extends Application implements Observer {
 		});
 
 		Label noButton = new Label("No");
-		noButton.setFont(mainFont);
+		noButton.setFont(MAIN_FONT);
 		noButton.setTextFill(Color.WHITE);
 		pane.setBottom(noButton);
 		BorderPane.setAlignment(noButton, Pos.CENTER);
@@ -272,7 +283,7 @@ public class WordleGUIView extends Application implements Observer {
 			endGame();
 		});
 
-		Scene scene = new Scene(pane, 550, 400);
+		Scene scene = new Scene(pane, MINI_SCENE_WIDTH, MINI_SCENE_HEIGHT);
 		stage.setScene(scene);
 		stage.setTitle("Wordle");
 		stage.show();
