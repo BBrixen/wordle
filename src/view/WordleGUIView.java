@@ -308,10 +308,6 @@ public class WordleGUIView extends Application implements Observer {
 		stage.close();
 	}
 
-	public static void main(String[] args) {
-		launch(args);
-	}
-
 	@Override
 	public void update(Observable o, Object arg) {
 		WordleController controller = (WordleController) arg;
