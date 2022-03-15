@@ -1,4 +1,5 @@
 ### Bennett's Notes:
+ - my project does not have a .project, since i am using intellij and was able to create the project without it
  - The default gui size is 1100x900, however if this is too large for your screen you should be able to modity it and it will look fine. 
  - no promises for all sizes, but i tested 800x800 and 600x400 and they work
 
