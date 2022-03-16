@@ -35,6 +35,7 @@ public class WordleGUIView extends Application implements Observer {
 	private static Label[] guessedCharactersList;
 	private static Label[][] progressLabelGrid;
 	private static int curRow, curCol;
+	private static Guess mostRecentGuess;
 
 	// variables for gui display (mostly dependent on size of screen)
 	// scene size
@@ -93,12 +94,12 @@ public class WordleGUIView extends Application implements Observer {
 				int len = currentWord.length();
 				if (len <= 0) return;
 				currentWord = currentWord.substring(0, len - 1);
-				this.update(null, controller);
+				updateCurrentWord();
 
 			} else if (code.matches("[a-zA-Z]")) {
 				if (currentWord.length() >= wordleLength) return;
 				currentWord += code;
-				this.update(null, controller);
+				updateCurrentWord();
 			}
 		});
 
@@ -219,6 +220,7 @@ public class WordleGUIView extends Application implements Observer {
 			int len = currentWord.length();
 			if (len <= 0) return;
 			currentWord = currentWord.substring(0, len - 1);
+			updateCurrentWord();
 		}, guessedCharactersGroup); // delete key removes last letter
 		x++;
 
@@ -241,7 +243,7 @@ public class WordleGUIView extends Application implements Observer {
 				(event) -> {
 					if (currentWord.length() >= wordleLength) return;
 					currentWord += "" + letter;
-					this.update(null, controller);
+					updateCurrentWord();
 				}, guessedCharactersGroup);
 	}
 
@@ -258,7 +260,10 @@ public class WordleGUIView extends Application implements Observer {
 		}
 
 		if (controller.isGameOver()) {
-			showAnimation(controller);
+			if (mostRecentGuess.getIsCorrect())
+				showAnimation(controller);
+			else
+				promptGameOver(controller);
 		}
 	}
 
@@ -348,12 +353,10 @@ public class WordleGUIView extends Application implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		WordleController controller = (WordleController) arg;
-		if (o == null) {
-			updateCurrentWord();
-		} else {
-			updateGuessedWords(controller);
-		}
+		WordleController controller = (WordleController) o;
+		mostRecentGuess = (Guess) arg;
+
+		updateGuessedWords(controller, mostRecentGuess);
 	}
 
 	private void updateCurrentWord() {
@@ -364,20 +367,11 @@ public class WordleGUIView extends Application implements Observer {
 		}
 	}
 
-	private void updateGuessedWords(WordleController controller) {
+	private void updateGuessedWords(WordleController controller, Guess lastGuess) {
 		INDEX_RESULT[] guessedCharacters = controller.getGuessedCharacters();
 		for (int i = 0; i < guessedCharacters.length; i++) {
 			Label label = guessedCharactersList[i];
 			label.setTextFill(guessedCharacters[i].getColor());
-		}
-
-		Guess[] guesses = controller.getProgress();
-		Guess lastGuess = null;
-		for (int i = guesses.length - 1; i >= 0; i--) {
-			if (guesses[i].getIndices()[0] != INDEX_RESULT.UNGUESSED) {
-				lastGuess = guesses[i];
-				break;
-			}
 		}
 
 		for (int i = 0; i < lastGuess.getIndices().length; i++) {

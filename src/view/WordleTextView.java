@@ -123,6 +123,6 @@ public class WordleTextView implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        displayProgress((WordleController) arg);
+        displayProgress((WordleController) o);
     }
 }

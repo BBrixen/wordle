@@ -5,16 +5,15 @@ import utilities.ArraySet;
 import utilities.Guess;
 import utilities.INDEX_RESULT;
 import utilities.IncorrectGuessException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
+ * @author Bennett Brixen
  * This class represents the controller for the model and the game. It contains the model as well as a few
- * variables which dictate how the game runs. It stores the users progress as a list of guesses.
- * This can handle a guess by validating it and then calling the model. It then takes the guess information
- * from the model and stores it as well as determining if the game has concluded.
+ * variables which dictate how the game runs.
+ * This can handle a guess by validating it and then calling the model.
  */
 public class WordleController extends Observable implements Observer {
 
@@ -144,6 +143,6 @@ public class WordleController extends Observable implements Observer {
 	public void update(Observable o, Object arg) {
 		// this just passes the update to the view
 		setChanged();
-		notifyObservers(this);
+		notifyObservers(arg);
 	}
 }

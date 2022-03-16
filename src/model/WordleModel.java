@@ -187,7 +187,7 @@ public class WordleModel extends Observable {
 
 		// notifying observers
 		setChanged();
-		notifyObservers(this);
+		notifyObservers(guessResult);
 	}
 
 }
