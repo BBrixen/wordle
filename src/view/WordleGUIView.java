@@ -1,6 +1,7 @@
 package view;
 
 import controller.WordleController;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -14,12 +15,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import utilities.Guess;
 import utilities.INDEX_RESULT;
 import utilities.IncorrectGuessException;
 import java.util.Observable;
 import java.util.Observer;
-
 import static view.Wordle.*;
 
 /**
@@ -36,13 +37,21 @@ public class WordleGUIView extends Application implements Observer {
 	private static int curRow, curCol;
 
 	// variables for gui display (mostly dependent on size of screen)
+	// scene size
 	private static final int MAIN_SCENE_WIDTH = 1100;
 	private static final int MAIN_SCENE_HEIGHT = 900;
 	private static final int MINI_SCENE_WIDTH = MAIN_SCENE_WIDTH/2;
 	private static final int MINI_SCENE_HEIGHT = MAIN_SCENE_HEIGHT/2;
+
+	// letter size
 	private static final int LETTER_SPACING = Math.min(MAIN_SCENE_WIDTH/13, MAIN_SCENE_HEIGHT/13);
 	private static final Font MAIN_FONT = new Font("Arial", LETTER_SPACING/1.6);
 	private static final Insets LABEL_SPACING = new Insets(10);
+
+	// animations
+	private static final int ANIMATION_LENGTH = 250;
+	private static final int BOUNCES = 3;
+	private static final int BOUNCE_HEIGHT = 50;
 
 	@Override
 	public void start(Stage stage) {
@@ -52,7 +61,7 @@ public class WordleGUIView extends Application implements Observer {
 		startGame();
 	}
 
-	public void createDisplay(WordleController controller) {
+	private void createDisplay(WordleController controller) {
 		// top label
 		Label topLabel = new Label("Welcome to Bennett's Wordle");
 		topLabel.setFont(MAIN_FONT);
@@ -236,7 +245,7 @@ public class WordleGUIView extends Application implements Observer {
 				}, guessedCharactersGroup);
 	}
 
-	public void enterGuess(WordleController controller) {
+	private void enterGuess(WordleController controller) {
 		try {
 			controller.makeGuess(currentWord);
 			currentWord = "";
@@ -248,11 +257,40 @@ public class WordleGUIView extends Application implements Observer {
 			a.showAndWait();
 		}
 
-		if (controller.isGameOver())
-			promptGameOver(controller);
+		if (controller.isGameOver()) {
+			showAnimation(controller);
+		}
 	}
 
-	public void promptGameOver(WordleController controller) {
+	private void showAnimation(WordleController controller) {
+		int correctGuessRow = curRow - 1;
+		Label[] lastGuessLabels = progressLabelGrid[correctGuessRow];
+
+		for (int i = 0; i < lastGuessLabels.length; i++) {
+			Label label = lastGuessLabels[i];
+			WordleController tempController = null;
+			
+			if (i == lastGuessLabels.length - 1) tempController = controller; // use this to prompt game over
+			letterJump(label, tempController);
+		}
+	}
+
+	private void letterJump(Label label, WordleController controller) {
+		TranslateTransition bounceAnimation = new TranslateTransition();
+		bounceAnimation.setDuration(Duration.millis(ANIMATION_LENGTH));
+		bounceAnimation.setNode(label);
+		bounceAnimation.setByY(-1*BOUNCE_HEIGHT); // multipliled by -1
+		bounceAnimation.setCycleCount(2*BOUNCES); // this is doubled because 2 cycles = 1 bounce
+		bounceAnimation.setAutoReverse(true);
+
+		// we use this one time on the final label, so that we only create 1 display
+		if (controller != null) 
+			bounceAnimation.setOnFinished(e -> promptGameOver(controller));
+		
+		bounceAnimation.play();
+	}
+
+	private void promptGameOver(WordleController controller) {
 		Stage stage = new Stage();
 		BorderPane pane = new BorderPane();
 		pane.setStyle("-fx-background-color: black");
@@ -318,7 +356,7 @@ public class WordleGUIView extends Application implements Observer {
 		}
 	}
 
-	public void updateCurrentWord() {
+	private void updateCurrentWord() {
 		for (int i = 0; i < wordleLength; i++) {
 			Label label = progressLabelGrid[curRow][i];
 			if (i >= currentWord.length()) label.setText(" ");
@@ -326,7 +364,7 @@ public class WordleGUIView extends Application implements Observer {
 		}
 	}
 
-	public void updateGuessedWords(WordleController controller) {
+	private void updateGuessedWords(WordleController controller) {
 		INDEX_RESULT[] guessedCharacters = controller.getGuessedCharacters();
 		for (int i = 0; i < guessedCharacters.length; i++) {
 			Label label = guessedCharactersList[i];
