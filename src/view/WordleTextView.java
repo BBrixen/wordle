@@ -63,7 +63,7 @@ public class WordleTextView implements Observer {
      *
      * @param controller the wordle game controller
      */
-    public void displayProgress(WordleController controller) {
+    private void displayProgress(WordleController controller) {
         Guess[] prog = controller.getProgress();
         String[] guessedCharacters = parseGuessedCharacters(controller.getGuessedCharacters());
 
@@ -97,7 +97,7 @@ public class WordleTextView implements Observer {
      * @param guessedCharacters - the guess status of the alphabet
      * @return - the alphabet colored with ascii color codes
      */
-    public String[] parseGuessedCharacters(INDEX_RESULT[] guessedCharacters) {
+    private String[] parseGuessedCharacters(INDEX_RESULT[] guessedCharacters) {
         String[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
         // adds color code to each letter
         for (int i = 0; i < guessedCharacters.length; i++) {
@@ -114,7 +114,7 @@ public class WordleTextView implements Observer {
      * @param controller the controller for the current game
      * @param scanner the scanner for user input
      */
-    public void playGame(WordleController controller, Scanner scanner) {
+    private void playGame(WordleController controller, Scanner scanner) {
         while (!controller.isGameOver()) {
             String guess;
 
