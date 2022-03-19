@@ -1,6 +1,9 @@
 package utilities;
 
 /**
+ * @author Tyler Conklin and Bennett Brixen
+ * (I think i edited some parts of this, although i am not 100% sure)
+ *
  * This class represents a guess. It stores the original guess, the results
  * of the guess for each specific character index, and whether this guess was
  * correct or not.
@@ -13,6 +16,7 @@ public class Guess {
 
 	/**
 	 * Guess constructor.
+	 *
 	 * @param guess A string of the original guess.
 	 * @param indices An array describing the correctness of each individual index in the guess.
 	 * @param isCorrect A boolean of whether that guess is correct or not.
@@ -28,6 +32,7 @@ public class Guess {
 
 	/**
 	 * Returns the original guess.
+	 *
 	 * @return A string of the original guess.
 	 */
 	public String getGuess() {
@@ -36,6 +41,7 @@ public class Guess {
 
 	/**
 	 * Returns the results at each index of the guess.
+	 *
 	 * @return An array of the results of the guess at each index.
 	 */
 	public INDEX_RESULT[] getIndices() {
@@ -44,6 +50,7 @@ public class Guess {
 
 	/**
 	 * Returns whether this guess was correct or not.
+	 *
 	 * @return A boolean stating whether this guess was correct or not.
 	 */
 	public boolean getIsCorrect() {

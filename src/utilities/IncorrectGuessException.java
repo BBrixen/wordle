@@ -1,6 +1,7 @@
 package utilities;
 
 /**
+ * @author Bennett Brixen
  * This is a new esception solely for bad guesses. It is thrown in the controller and handled in the view.
  *
  * A guess is invalid if it is:

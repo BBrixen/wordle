@@ -3,9 +3,10 @@ package utilities;
 import java.util.*;
 
 /**
+ * @author Bennett Brixen
  * This class represents a set using an array of elements
  *
- * It is a generic implementation
+ * It is a generic implementation (i feel like there is nothing else to say)
  *
  * @param <E> - the type of object for the set
  */

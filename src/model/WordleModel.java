@@ -6,11 +6,14 @@ import java.util.Arrays;
 import java.util.Observable;
 
 /**
+ * @author Bennett Brixen
  * This class represents the wordle word. It stores the correct answer and the characters that have been guessed.
  * It uses INDEX_RESULT to distinguish between correct/incorrect/unguessed/correct but wrong place.
  * It contains multiple functions like correctLettersCorrectPlaces and correctLettersWrongPlaces which
  * analyze the word character by character returning INDEX_RESULT's for each character in
  * a guess or the guessed characters
+ *
+ * It also stores every guess made into the model, which are used to fill out the grid of characters
  */
 public class WordleModel extends Observable {
 
@@ -182,6 +185,7 @@ public class WordleModel extends Observable {
 		Guess guessResult = new Guess(guess, combination, guess.equalsIgnoreCase(this.answer));
 		this.progress[row] = guessResult;
 		row ++;
+
 		// check if the words are the same or if they have used all their guesses
 		if (guessResult.getIsCorrect() || row == this.getProgress().length) gameOver = true;
 
